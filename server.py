@@ -18,10 +18,12 @@ print("Server @ " + sHost + ":" + str(sPort))
 
 def listen(cs):
     #code to listen for client
-    msg = cs.recv(2048)
+    msg = cs.recv(2048).decode()
     
     if msg:
         msg = msg.replace(sepToken, ":")
+        
+        print(msg)
         
         #send msg
     else:

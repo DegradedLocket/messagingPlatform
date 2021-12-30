@@ -11,4 +11,7 @@ print("Connected")
 
 while True:
     sockList = [serv]
-#print("Client")z
+    
+    msg = input("Type: ")
+    serv.send(msg.encode())
+#print("Client")zHe
