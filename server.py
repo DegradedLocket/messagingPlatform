@@ -34,3 +34,5 @@ while True:
     cliSocks.append(cliSock)
     
     print("Client " + str(cliAddr) +  " connected")
+    
+    listen(cliSock)
