@@ -3,7 +3,6 @@ import socket
 #server settings
 sHost = "0.0.0.0" #all local ips 
 sPort = 8081
-sepToken = "<SEP>"
 
 cliSocks = [] #list of clients
 
@@ -21,9 +20,8 @@ def listen(cs):
     msg = cs.recv(2048).decode()
     
     if msg:
-        msg = msg.replace(sepToken, ":")
-        
-        print(msg)
+        peername = cs.getpeername()
+        print(str(peername[1]) + " - " + msg)
         
         #send msg
     else:
