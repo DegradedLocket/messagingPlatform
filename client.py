@@ -1,4 +1,5 @@
 import socket
+import select
 from datetime import datetime
 
 #target information
@@ -11,18 +12,19 @@ serv.connect((sHost, sPort))
 print("Connected")
 
 def listen():
-    while True:
-        msg = serv.recv(2048).decode()
-        print("\n" + msg)
-        
+    msg = serv.recv(2048).decode()
+    print("\n" + msg)
+    
 while True:
-    sockList = [serv]
-    
-    msg = input("Type: ")
-    date = datetime.now().strftime('%Y-%m-%d %H:%M:%S') 
-    msg = str(date + " : " + msg)
-    
-    serv.send(msg.encode())
-    
-    listen()
+    sockList = [input("Test: "),serv]
+    readSock, writeSock, errSock = select.select(sockList,[],[])
+    for sock in readSock:
+        if sock == serv:
+            listen()
+        else:
+            msg = input("Type: ")
+            date = datetime.now().strftime('%Y-%m-%d %H:%M:%S') 
+            msg = str(date + " : " + msg)
+        
+            serv.send(msg.encode())
 #print("Client")zHe
