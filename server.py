@@ -26,6 +26,9 @@ def listen(cs):
         #send msg
     else:
         cliSocks.remove(cs)
+        
+    for cliS in cliSocks:
+        cliS.send(msg.encode())
     
 #print("Server")
 
