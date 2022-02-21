@@ -1,7 +1,10 @@
 import socket
 import select
 import sys
+import time
 from datetime import datetime
+
+from csvFunc import writeCSV
 
 #target information
 sHost = "127.0.0.1" #all local ips
@@ -13,8 +16,19 @@ serv.connect((sHost, sPort))
 print("Connected")
 
 def listen():
+    #start timer
+    decryptStart = time.time()
+
     msg = serv.recv(2048).decode()
+
+    #decrypt
+    decryptEnd = time.time()
+
     print("\n" + msg)
+
+    decryptTime = decryptEnd - decryptStart
+
+    writeCSV("decrypt.csv", decryptTime)
 
 while True:
     sockList = [sys.stdin,serv]
@@ -24,8 +38,23 @@ while True:
             listen()
         else:
             msg = sys.stdin.readline()
+
+            #start timer
+            encryptStart = time.time()
+
             date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             msg = str(date + " : " + msg)
 
+            plainSize = sys.getsizeof(msg)
+            #encrypt
+
+            #end timer
+            encryptEnd = time.time()
+
             serv.send(msg.encode())
-#print("Client")zHe
+
+            encryptTime = encryptEnd - encryptStart
+
+            writeCSV("encrypt.csv", encryptTime)
+
+            writeCSV("size.csv", plainSize)
