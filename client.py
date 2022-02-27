@@ -28,7 +28,7 @@ def listen():
 
     decryptTime = decryptEnd - decryptStart
 
-    writeCSV("decrypt.csv", decryptTime)
+    #writeCSV("decrypt.csv", decryptTime)
 
 while True:
     sockList = [sys.stdin,serv]
@@ -55,6 +55,6 @@ while True:
 
             encryptTime = encryptEnd - encryptStart
 
-            writeCSV("encrypt.csv", encryptTime)
+            #writeCSV("encrypt.csv", encryptTime)
 
-            writeCSV("size.csv", plainSize)
+            #writeCSV("size.csv", plainSize)
