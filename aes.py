@@ -22,8 +22,8 @@ class AESCipher():
 
     def decrypt(self, cipherText):
         #decrypt
-        iv = cipherText[:blockSize]
-        cipher = AES.new(key, AES.MODE_CBC, iv)
+        iv = cipherText[:self.blockSize]
+        cipher = AES.new(self.key, AES.MODE_CBC, iv)
 
         plainText = cipher.decrypt(cipherText)
         plainText = self.unPad(plainText)
@@ -32,7 +32,7 @@ class AESCipher():
 
 
     def padding(self, msg):
-        sizeOfPad = blockSize - (len(msg) % blockSize)
+        sizeOfPad = self.blockSize - (len(msg) % self.blockSize)
         padding = chr(sizeOfPad)
 
         padding = padding * sizeOfPad
@@ -49,6 +49,3 @@ class AESCipher():
         unPadText = msg[:-sizeOfPad]
 
         return unPadText
-
-
-
