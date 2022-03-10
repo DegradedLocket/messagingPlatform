@@ -1,45 +1,54 @@
-
+import hashlib
 from Crypto import Random
 from Crypto.Cipher import AES
 
-numRounds = 14
-blockSize = 16
-blocks = []
+class AESCipher():
+    def __init__(self, key):
+        self.blockSize = AES.block_size
+        self.key = hashlib.sha256(key.encode()).digest()
 
 
-def padding(msg):
-    sizeOfPad = blockSize - (len(msg) % blockSize)
-    padding = chr(sizeOfPad)
+    def encrypt(self, msg):
+        #encrypt
+        msg = self.padding(msg)
 
-    padding = padding * sizeOfPad
+        #setting init vector
+        iv = Random.new().read(self.blockSize)
+        cipher = AES.new(self.key, AES.MODE_CBC, iv)
 
-    paddedText = msg + padding
+        cipherText = cipher.encrypt(msg.encode())
 
-def unPad(msg):
-    #get the last character of message and use that to set how much padding to remove
-    lastChar = msg[len(msg) - 1:]
-    sizeOfPad = ord(lastChar)
+        return cipherText
 
-    unPadText = msg[:-sizeOfPad]
+    def decrypt(self, cipherText):
+        #decrypt
+        iv = cipherText[:blockSize]
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+
+        plainText = cipher.decrypt(cipherText)
+        plainText = self.unPad(plainText)
+
+        return plainText
 
 
-def subBytes():
-    for i in range(4):
-        for j in range(4):
-            #substitute
+    def padding(self, msg):
+        sizeOfPad = blockSize - (len(msg) % blockSize)
+        padding = chr(sizeOfPad)
 
-def shiftRows():
-    #shiftRows
+        padding = padding * sizeOfPad
 
-def mixColumns():
-    #mixCols
+        paddedText = msg + padding
 
-def addRoundKeys():
-    #addRoundKeys
+        return paddedText
 
-def encrypt():
-    #encrypt
-    msg = padding(msg)
+    def unPad(self, msg):
+        #get the last character of message and use that to set how much padding to remove
+        lastChar = msg[len(msg) - 1:]
+        sizeOfPad = ord(lastChar)
 
-def decrypt():
-    #decrypt
+        unPadText = msg[:-sizeOfPad]
+
+        return unPadText
+
+
+
