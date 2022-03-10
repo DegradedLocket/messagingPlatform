@@ -18,18 +18,18 @@ print("Server @ " + sHost + ":" + str(sPort))
 
 def listen(cs):
     #code to listen for client
-    msg = cs.recv(2048).decode()
+    while True:
+        msg = cs.recv(2048).decode()
+        if msg:
+            peername = cs.getpeername()
+            print(str(peername[1]) + " - " + msg)
 
-    if msg:
-        peername = cs.getpeername()
-        print(str(peername[1]) + " - " + msg)
+            #send msg
+            for cli in cliSocks:
+                cli.send(msg.encode())
+        else:
+            cliSocks.remove(cs)
 
-        #send msg
-    else:
-        cliSocks.remove(cs)
-
-    for cli in cliSocks:
-        cli.send(msg.encode())
 
 #print("Server")
 

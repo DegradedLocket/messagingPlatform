@@ -52,9 +52,8 @@ while True:
             encryptEnd = time.time()
 
             serv.send(msg.encode())
-
             encryptTime = encryptEnd - encryptStart
-
+            sys.stdout.flush()
             #writeCSV("encrypt.csv", encryptTime)
 
             #writeCSV("size.csv", plainSize)
