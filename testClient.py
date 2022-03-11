@@ -1,11 +1,11 @@
 import socket
-import select
 import sys
 import time
 from datetime import datetime
 
 from csvFunc import writeCSV
 
+fields = []
 
 importFile = sys.argv[1]
 numOfTests = int(sys.argv[2])
@@ -40,3 +40,9 @@ for _ in range(numOfTests):
     serv.send(msg.encode())
     encryptTime = encryptEnd - encryptStart
     sys.stdout.flush()
+
+    fields = [encryptTime, importFile]
+
+    writeCSV("encrypt.csv", fields)
+
+    #writeCSV("size.csv", plainSize)
