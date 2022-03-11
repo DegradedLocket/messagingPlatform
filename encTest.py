@@ -1,4 +1,3 @@
-from pydoc import plain
 import blowfish, aes
 
 #key = [0x4B7A70E9, 0xB5B32944, 0xDB75092E, 0xC4192623,
@@ -13,5 +12,5 @@ msg = input("Enter Message: ")
 cipherText = aes.AESCipher(key).encrypt(msg)
 print(cipherText)
 
-plainText = aes.AESCipher(key).decrypt(msg)
+plainText = aes.AESCipher(key).decrypt(cipherText)
 print(plainText)
