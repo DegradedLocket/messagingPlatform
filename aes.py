@@ -22,10 +22,11 @@ class AESCipher():
 
     def decrypt(self, cipherText):
         #decrypt
+        #cipherText = cipherText.decode("utf8")
         iv = cipherText[:self.blockSize]
-        cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        cipher = AES.new(self.key, AES.MODE_CBC, iv.encode("utf8"))
 
-        plainText = cipher.decrypt(cipherText)
+        plainText = cipher.decrypt(cipherText[self.blockSize:])
         plainText = self.unPad(plainText)
 
         return plainText

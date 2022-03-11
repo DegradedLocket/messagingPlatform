@@ -1,4 +1,3 @@
-from pydoc import plain
 from Crypto.Cipher import Blowfish
 
 class BlowfishCipher():
