@@ -6,11 +6,12 @@ import blowfish, aes
 #       0x193602A5, 0x75094C29]
 key = "topsercretkey"
 
-msg = input("Enter Message: ")
+msg = "testingtestingtesting"#input("Enter Message: ")
 
-#cipherText = blowfish.BlowfishCipher(key.encode("utf8")).encrypt(msg.encode("utf8"))
-cipherText = aes.AESCipher(key).encrypt(msg)
+cipherText = blowfish.BlowfishCipher(key).encrypt(msg)
+#cipherText = aes.AESCipher(key).encrypt(msg)
 print(cipherText)
 
-plainText = aes.AESCipher(key).decrypt(cipherText)
+#plainText = aes.AESCipher(key).decrypt(cipherText)
+plainText = blowfish.BlowfishCipher(key).decrypt(cipherText)
 print(plainText)

@@ -1,21 +1,27 @@
 from Crypto.Cipher import Blowfish
+import hashlib
+import base64
 
 class BlowfishCipher():
     def __init__(self, key):
-        self.key = key
+        self.key = hashlib.sha256(key.encode()).digest()
         self.blockSize = Blowfish.block_size
 
+
     def encrypt(self, msg):
+        msg = self.padding(msg)
         cipher = Blowfish.new(self.key, Blowfish.MODE_ECB)
 
-        cipherText = cipher.encrypt(msg)
+        cipherText = base64.b64encode(cipher.encrypt(msg.encode()))
         return cipherText
 
     def decrypt(self, cipherText):
+        cipherText = base64.b64decode(cipherText)
+
         cipher = Blowfish.new(self.key, Blowfish.MODE_ECB)
 
         plainText = cipher.decrypt(cipherText)
-        return plainText
+        return self.unPad(plainText).decode("utf-8")
 
 
     def padding(self, msg):

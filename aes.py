@@ -1,4 +1,5 @@
 import hashlib
+import base64
 from Crypto import Random
 from Crypto.Cipher import AES
 
@@ -16,18 +17,19 @@ class AESCipher():
         iv = Random.new().read(self.blockSize)
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
 
-        cipherText = cipher.encrypt(msg.encode())
+        cipherText = base64.b64encode(iv + cipher.encrypt(msg.encode()))
 
         return cipherText
 
     def decrypt(self, cipherText):
         #decrypt
-        #cipherText = cipherText.decode("utf8")
+        cipherText = base64.b64decode(cipherText)
+
         iv = cipherText[:self.blockSize]
-        cipher = AES.new(self.key, AES.MODE_CBC, iv.encode("utf8"))
+        cipher = AES.new(self.key, AES.MODE_CBC, iv)
 
         plainText = cipher.decrypt(cipherText[self.blockSize:])
-        plainText = self.unPad(plainText)
+        plainText = self.unPad(plainText).decode("utf-8")
 
         return plainText
 
