@@ -1,0 +1,48 @@
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header h1, select{
+    display: inline-block;
+}
+header h1{
+    padding-right: 10vw;
+}
+
+#messages{
+    height: 90vh;
+    border-top: solid lightgray 1px;
+    overflow-y: auto;
+}
+.msg p{
+    display: inline-block;
+}
+.msg{
+    border-bottom: solid lightgray 1px;
+}
+.msgUser{
+    color: royalblue;
+}
+.msgTime{
+    color: grey;
+}
+
+form{
+    width: 100%;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    height: 10vh;
+}
+.sticky{
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    bottom: 5vh;
+}
+#msgBox{
+    width: 85%;
+    height: 100%
+}
+#subBtn{
+    width: 10%;
+    height: 100%;
+}

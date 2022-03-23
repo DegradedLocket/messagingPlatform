@@ -8,10 +8,13 @@ key = "topsercretkey"
 
 msg = "testingtestingtesting"#input("Enter Message: ")
 
-cipherText = blowfish.BlowfishCipher(key).encrypt(msg)
-#cipherText = aes.AESCipher(key).encrypt(msg)
-print(cipherText)
+bCipherText = blowfish.BlowfishCipher(key).encrypt(msg)
+aCipherText = aes.AESCipher(key).encrypt(msg)
+print(bCipherText)
+print(aCipherText)
 
-#plainText = aes.AESCipher(key).decrypt(cipherText)
-plainText = blowfish.BlowfishCipher(key).decrypt(cipherText)
-print(plainText)
+bplainText = aes.AESCipher(key).decrypt(aCipherText)
+aplainText = blowfish.BlowfishCipher(key).decrypt(bCipherText)
+print(bplainText)
+print(aplainText)
+

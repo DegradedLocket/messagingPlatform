@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="styles.css"/>
+    </head>
+    <body>
+        <header>
+            <h1>User</h1>
+            <select name="enc" id="enc">
+                <option value="aes">AES</option>
+                <option value="bf">Blowfish</option>
+                <option value="signal">Signal Protocol</option>
+            </select>
+        </header>
+
+        <div id="messages">
+            <div class="msg">
+                <p class="msgUser">123</p>
+                <p class="msgTime">02/03/2022 16:00</p>
+                <p class="msgText">Message here</p>
+            </div>
+
+            <div class="msg">
+                <p class="msgUser">123</p>
+                <p class="msgTime">02/03/2022 16:00</p>
+                <p class="msgText">Message here</p>
+            </div>
+
+            <div class="msg">
+                <p class="msgUser">123</p>
+                <p class="msgTime">02/03/2022 16:00</p>
+                <p class="msgText">Message here</p>
+            </div>
+
+        </div>
+        <form method="post" class="sticky">
+            <input id="msgBox" type="text" />
+            <button id="subBtn" type="submit">Send</button>
+        </form>
+    </body>
+</html>
