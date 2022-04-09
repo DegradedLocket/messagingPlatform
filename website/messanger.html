@@ -12,11 +12,13 @@
             </select>
         </header>
         <div id="messages">
-            <div class="msg">
-                <p class="msgUser">123</p>
-                <p class="msgTime">02/03/2022 16:00</p>
-                <p class="msgText">Message here</p>
-            </div>
+            {%for msg in msgs%}
+                <div class="msg">
+                    <p class="msgUser">123</p>
+                    <p class="msgTime">02/03/2022 16:00</p>
+                    <p class="msgText">{{msg.msgText}}</p>
+                </div>
+            {%endfor%}
 
             <div class="msg">
                 <p class="msgUser">123</p>

@@ -13,7 +13,7 @@ header h1{
 #messages{
     max-height: 75vh;
     border-top: solid lightgray 1px;
-    border-bottom: solid lightgray 1px;
+    border-bottom: solid lightgray 2px;
     overflow: scroll;
     margin-bottom: 100px;
 }

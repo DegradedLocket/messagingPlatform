@@ -2,7 +2,7 @@ import csv
 
 
 def writeCSV(fileName, fields):
-    f = open(fileName, "a")
+    f = open("results/" + fileName, "a")
 
     csvWriter = csv.writer(f)
 

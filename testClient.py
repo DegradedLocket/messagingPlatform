@@ -3,9 +3,14 @@ import sys
 import time
 from datetime import datetime
 
+import encryption.aes as aes
+import encryption.blowfish as bf
+
 from csvFunc import writeCSV
 
 fields = []
+
+key = "testKey"
 
 importFile = sys.argv[1]
 numOfTests = int(sys.argv[2])
@@ -33,6 +38,7 @@ for _ in range(numOfTests):
 
     plainSize = sys.getsizeof(msg)
     #encrypt
+    aes.AESCipher(key).encrypt(msg)
 
     #end timer
     encryptEnd = time.time()
@@ -43,6 +49,6 @@ for _ in range(numOfTests):
 
     fields = [encryptTime, importFile]
 
-    writeCSV("encrypt.csv", fields)
+    writeCSV("AESencrypt.csv", fields)
 
     #writeCSV("size.csv", plainSize)

@@ -1,4 +1,5 @@
-import blowfish, aes
+import encryption.blowfish as blowfish
+import encryption.aes as aes
 
 #key = [0x4B7A70E9, 0xB5B32944, 0xDB75092E, 0xC4192623,
 #       0xAD6EA6B0, 0x49A7DF7D, 0x9CEE60B8, 0x8FEDB266,
