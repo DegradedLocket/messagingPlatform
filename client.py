@@ -28,23 +28,23 @@ def listen():
     #start timer
     decryptStart = time.time()
 
-    msg = serv.recv(2048).decode()
+    recvMsg = serv.recv(2048).decode()
 
     #decrypt
     if encMtd == "a":
-        aes.AESCipher(key).encrypt(msg)
+        recvMsg = aes.AESCipher(key).decrypt(recvMsg)
     elif encMtd == "b":
-        bf.BlowfishCipher(key).decrypt(msg)
+        recvMsg = bf.BlowfishCipher(key).decrypt(recvMsg)
     #elif encMtd = "c":
         #signal
 
     decryptEnd = time.time()
 
-    print("\n" + msg)
+    print(recvMsg)
 
     decryptTime = decryptEnd - decryptStart
 
-    writeCSV( encMtd + "decrypt.csv", decryptTime)
+    writeCSV(encMtd + "decrypt.csv", [decryptTime])
 
 while True:
     sockList = [sys.stdin,serv]
@@ -64,16 +64,16 @@ while True:
             plainSize = sys.getsizeof(msg)
             #encrypt
             if encMtd == "a":
-                aes.AESCipher(key).encrypt(msg)
+                msg = aes.AESCipher(key).encrypt(msg)
             elif encMtd == "b":
-                bf.BlowfishCipher(key).decrypt(msg)
+                msg = bf.BlowfishCipher(key).decrypt(msg)
             #elif encMtd = "c":
                 #signal
 
             #end timer
             encryptEnd = time.time()
 
-            serv.send(msg.encode())
+            serv.send(msg)#.encode())
             encryptTime = encryptEnd - encryptStart
             sys.stdout.flush()
             #writeCSV("encrypt.csv", encryptTime)

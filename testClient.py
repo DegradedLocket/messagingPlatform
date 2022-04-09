@@ -38,7 +38,7 @@ for _ in range(numOfTests):
 
     plainSize = sys.getsizeof(msg)
     #encrypt
-    aes.AESCipher(key).encrypt(msg)
+    msg = aes.AESCipher(key).encrypt(msg)
 
     #end timer
     encryptEnd = time.time()
