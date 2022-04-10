@@ -43,7 +43,7 @@ for _ in range(numOfTests):
     #end timer
     encryptEnd = time.time()
 
-    serv.send(msg.encode())
+    serv.send(msg)#.encode())
     encryptTime = encryptEnd - encryptStart
     sys.stdout.flush()
 
