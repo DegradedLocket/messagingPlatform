@@ -1,11 +1,14 @@
 import socket
 from threading import Thread
+import os
 
 #server settings
 sHost = "0.0.0.0" #all local ips
 sPort = 8081
 
 cliSocks = [] #list of clients
+
+maxSize = os.path.getsize("testData/5Mdata.txt")
 
 serv = socket.socket()
 
@@ -19,7 +22,7 @@ print("Server @ " + sHost + ":" + str(sPort))
 def listen(cs):
     #code to listen for client
     while True:
-        msg = cs.recv(2048).decode()
+        msg = cs.recv(maxSize).decode()
         if msg:
             peername = cs.getpeername()
             print(str(peername[1]) + " - " + msg)

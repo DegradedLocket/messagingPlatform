@@ -2,6 +2,7 @@ import socket
 import select
 import sys
 import time
+import os
 from datetime import datetime
 
 import encryption.aes as aes
@@ -9,6 +10,7 @@ import encryption.blowfish as bf
 from csvFunc import writeCSV
 
 key ="testkey"
+maxSize = os.path.getsize("testData/5Mdata.txt")
 
 #target information
 sHost = "127.0.0.1" #all local ips
@@ -28,7 +30,7 @@ def listen():
     #start timer
     decryptStart = time.time()
 
-    recvMsg = serv.recv(2048).decode()
+    recvMsg = serv.recv(maxSize).decode()
 
     #decrypt
     if encMtd == "a":
@@ -44,7 +46,7 @@ def listen():
 
     decryptTime = decryptEnd - decryptStart
 
-    writeCSV(encMtd + "decrypt.csv", [decryptTime])
+    #writeCSV(encMtd + "decrypt.csv", [decryptTime])
 
 while True:
     sockList = [sys.stdin,serv]
@@ -66,7 +68,7 @@ while True:
             if encMtd == "a":
                 msg = aes.AESCipher(key).encrypt(msg)
             elif encMtd == "b":
-                msg = bf.BlowfishCipher(key).decrypt(msg)
+                msg = bf.BlowfishCipher(key).encrypt(msg)
             #elif encMtd = "c":
                 #signal
 

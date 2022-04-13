@@ -38,7 +38,7 @@ for _ in range(numOfTests):
 
     plainSize = sys.getsizeof(msg)
     #encrypt
-    msg = aes.AESCipher(key).encrypt(msg)
+    msg = bf.BlowfishCipher(key).encrypt(msg)
 
     #end timer
     encryptEnd = time.time()
@@ -49,6 +49,6 @@ for _ in range(numOfTests):
 
     fields = [encryptTime, importFile]
 
-    writeCSV("AESencrypt.csv", fields)
+    writeCSV("BFencrypt.csv", fields)
 
     #writeCSV("size.csv", plainSize)
