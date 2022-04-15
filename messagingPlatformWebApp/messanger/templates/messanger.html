@@ -16,15 +16,19 @@
         <div id="messages">
             {%for msg in msgs%}
                 <div class="msg">
-                    <p class="msgUser">123</p>
-                    <p class="msgTime">02/03/2022 16:00</p>
+                    <p class="msgUser">{{msg.userFrom}}</p>
+                    <p class="msgTime">{{msg.msgDate}}</p>
                     <p class="msgText">{{msg.msgText}}</p>
                 </div>
             {%endfor%}
         </div>
-        <form method="post" class="sticky">
-            <input id="msgBox" type="text" />
-            <button id="subBtn" type="submit">Send</button>
+        <form method="POST" class="sticky">
+
+            {% csrf_token %}
+            {{form.as_p}}
+            <!--<input id="msgBox" type="text" name="msgContent"/>!-->
+            <button id="subBtn" type="submit" value="msgSend">Send</button>
+
         </form>
     </body>
 </html>

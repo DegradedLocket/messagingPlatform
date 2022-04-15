@@ -1,6 +1,8 @@
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from .models import Message
+from .forms import MsgForm
+#from datetime import datetime
 
 # Create your views here.
 
@@ -10,6 +12,11 @@ def index(request):
 
     return render(request, "messanger.html", context)
 
-#def m(request):
-#    msgs = M
-#    return render(request, "messanger.html", {"msg":msg})
+def sendmsg(request):
+    if request == "POST":
+        form = MsgForm(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            form = MsgForm()
+    return render(request, "messanger.hmtl", {"form":form})
