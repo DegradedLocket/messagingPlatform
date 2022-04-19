@@ -4,7 +4,7 @@ import sys
 
 import encryption.aes as aes
 import encryption.blowfish as bf
-import encryption.signal as sig
+import encryption.signal2 as sig
 import entropyTest
 
 from csvFunc import writeCSV
@@ -35,7 +35,8 @@ for file in files:
         #encrypt
         #msg = aes.AESCipher(key).encrypt(msg)
         #msg = bf.BlowfishCipher(key).encrypt(msg)
-        msg = sig.Signal().encrypt(msg)
+        #msg = sig.Signal().encrypt(msg)
+        sig.Signal().test()
 
         print(msg)
 
