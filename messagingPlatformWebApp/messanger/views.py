@@ -1,5 +1,6 @@
 
 from django.shortcuts import render
+from matplotlib.style import context
 from .models import Message
 from .forms import MsgForm
 #from datetime import datetime
@@ -13,6 +14,7 @@ def index(request):
     return render(request, "messanger.html", context)
 
 def sendmsg(request):
+    form = MsgForm
     if request == "POST":
         form = MsgForm(request.POST)
         if form.is_valid():

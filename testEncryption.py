@@ -4,6 +4,7 @@ import sys
 
 import encryption.aes as aes
 import encryption.blowfish as bf
+import encryption.signal as sig
 import entropyTest
 
 from csvFunc import writeCSV
@@ -17,8 +18,8 @@ key = "testKey"
 
 files = ["testData/engLipsum.txt"]
 #importFile = sys.argv[1]
-numOfTests = int(sys.argv[1])
-
+#numOfTests = int(sys.argv[1])
+numOfTests = 1
 
 for file in files:
     testDataFile = open(file, "r")
@@ -29,13 +30,18 @@ for file in files:
         #start timer
 
         #plainSize = sys.getsizeof(msg)
-        plainEnt = entropyTest.entropyTest(msg)
+        #plainEnt = entropyTest.entropyTest(msg)
+
         #encrypt
         #msg = aes.AESCipher(key).encrypt(msg)
-        msg = bf.BlowfishCipher(key).encrypt(msg)
+        #msg = bf.BlowfishCipher(key).encrypt(msg)
+        msg = sig.Signal().encrypt(msg)
 
-        encEnt = entropyTest.entropyTest(msg)
+        print(msg)
 
-        fields = [plainEnt, encEnt, file]
+        #encEnt = entropyTest.entropyTest(msg)
 
-        writeCSV("BFEntropy"+file[9:11]+".csv", fields)
+        #fields = [plainEnt, encEnt, file]
+
+        #print(fields)
+        #writeCSV("BFEntropy"+file[9:11]+".csv", fields)

@@ -41,8 +41,8 @@ form{
     position: sticky;
     bottom: 2vh;
 }
-/* #msgBox{ */
-form p{
+
+#msgBox {
     display: inline-block;
     width: 85%;
     height: 100%;

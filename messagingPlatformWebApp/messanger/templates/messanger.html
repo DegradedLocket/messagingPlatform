@@ -22,11 +22,9 @@
                 </div>
             {%endfor%}
         </div>
-        <form method="POST" class="sticky">
-
+        <form method="POST" class="sticky" action="">
             {% csrf_token %}
-            {{form.as_p}}
-            <!--<input id="msgBox" type="text" name="msgContent"/>!-->
+            <input id="msgBox" type="text" name="msgContent"></input>
             <button id="subBtn" type="submit" value="msgSend">Send</button>
 
         </form>
