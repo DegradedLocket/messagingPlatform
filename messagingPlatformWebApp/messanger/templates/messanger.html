@@ -22,7 +22,7 @@
                 </div>
             {%endfor%}
         </div>
-        <form method="POST" class="sticky" action="">
+        <form method="POST" class="sticky" action="{%url 'sendMsg' %}">
             {% csrf_token %}
             <input id="msgBox" type="text" name="msgContent"></input>
             <button id="subBtn" type="submit" value="msgSend">Send</button>

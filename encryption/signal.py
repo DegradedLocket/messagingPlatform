@@ -7,7 +7,6 @@ from axolotl.tests.inmemoryaxolotlstore import InMemoryAxolotlStore
 from axolotl.protocol.whispermessage import WhisperMessage
 
 
-import doubleratchet
 class Signal():
     def __init__(self):
         self.devID = 1
