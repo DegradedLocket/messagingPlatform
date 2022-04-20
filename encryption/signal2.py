@@ -132,33 +132,11 @@ class Signal(doubleratchet.ratchets.DoubleRatchet):
     def _makeAD(self, header, ad):
             return ad
 
-    def encrypt(self, msg):
-        cipherText = ratchet.encryptMessage(msg)
+    def encrypt(self, msg, r1, r2):
+        cipherText = r2.encryptMessage(msg.encode())
         return cipherText
 
-    def decrypt(self, msg):
-        plainText = ratchet.decryptMessage(msg)
-        return plainText
+    def decrypt(self, msg, r1, r2):
+        plainText = r1.decryptMessage(msg["ciphertext"], msg["header"])
+        return plainText.decode()
 
-
-
-
-def test():
-    key = KeyPair.generate()
-
-    r1 = Signal(key=key)
-    r2 = Signal(pubKey=key.pub)
-
-    assert not r1.canSend()
-    assert r2.canSend()
-
-    msg = "Hello there"
-
-    cipher = r2.encryptMessage(msg.encode())
-
-    print(cipher)
-
-    msg = r1.decryptMessage(cipher["ciphertext"], cipher["header"])
-
-    print(msg.decode())
-test()

@@ -1,5 +1,6 @@
 import sys
-#import time
+import time
+import base64
 #from datetime import datetime
 
 import encryption.aes as aes
@@ -9,7 +10,10 @@ import entropyTest
 
 from csvFunc import writeCSV
 
-fields = []
+encFields = []
+decFields = []
+sizeFields = []
+entFields = []
 
 key = "testKey"
 
@@ -18,8 +22,16 @@ key = "testKey"
 
 files = ["testData/engLipsum.txt"]
 #importFile = sys.argv[1]
-#numOfTests = int(sys.argv[1])
-numOfTests = 1
+numOfTests = int(sys.argv[1])
+#numOfTests = 1
+
+key = sig.KeyPair.generate()
+
+r1 = sig.Signal(key=key)
+r2 = sig.Signal(pubKey=key.pub)
+
+assert not r1.canSend()
+assert r2.canSend()
 
 for file in files:
     testDataFile = open(file, "r")
@@ -27,26 +39,43 @@ for file in files:
     for _ in range(numOfTests):
         msg = testData
 
-        #start timer
-
-        #plainSize = sys.getsizeof(msg)
-        #plainEnt = entropyTest.entropyTest(msg)
+        plainSize = sys.getsizeof(msg)
+        plainEnt = entropyTest.entropyTest(msg)
 
         #encrypt
+        encryptStart = time.time()
         #encmsg = aes.AESCipher(key).encrypt(msg)
         #writeCSV("AESEncrypt"+file[9:11]+".csv", fields)
-        #writeCSV("AESDecrypt"+file[9:11]+".csv", fields)
+
         #encmsg = bf.BlowfishCipher(key).encrypt(msg)
         #writeCSV("BFEncrypt"+file[9:11]+".csv", fields)
+        encMsg = sig.Signal().encrypt(msg, r1, r2)
+
+        encryptEnd = time.time()
+
+        encryptTime = encryptEnd - encryptStart
+        encFields = [encryptTime, file]
+
+        encSize = sys.getsizeof(encMsg)
+        sizeFields = [plainSize, encSize]
+
+
+        #decrypt
+        decryptStart = time.time()
+        #writeCSV("AESDecrypt"+file[9:11]+".csv", fields)
         #writeCSV("BFDecrypt"+file[9:11]+".csv", fields)
-        #msg = sig.Signal().encrypt(msg)
-        sig.test()
+        sig.Signal().decrypt(encMsg, r1, r2)
+        decryptEnd = time.time()
 
-        #print(msg)
+        decryptTime = decryptEnd - decryptStart
+        decFields = [decryptTime, file]
 
-        #encEnt = entropyTest.entropyTest(msg)
+        #writeCSV("SigEncrypt"+file[9:11]+".csv", encFields)
+        #writeCSV("SigDecrypt"+file[9:11]+".csv", decFields)
+        #writeCSV("SigSize"+file[9:11]+".csv", sizeFields)
 
-        #fields = [plainEnt, encEnt, file]
+        encEnt = entropyTest.entropyTest(encMsg["ciphertext"])
 
-        #print(fields)
-        #writeCSV("BFEntropy"+file[9:11]+".csv", fields)
+        entFields = [plainEnt, encEnt, file]
+
+        writeCSV("SigEntropy.csv", entFields)
