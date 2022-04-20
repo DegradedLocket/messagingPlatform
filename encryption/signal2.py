@@ -8,24 +8,30 @@ import doubleratchet
 from nacl.public import PrivateKey as Curve25519DecryptionKey
 from nacl.public import PublicKey as Curve25519EncryptionKey
 
-class Signal(doubleratchet.ratchets.DoubleRatchet):
-    def __init__(self, key = None, pubKey = None):
-        super(Signal, self).__init__(
-            doubleratchet.recommended.CBCHMACAEAD(
-                "SHA-512", "ExampleCBCHMACAEADConfig".encode()), 5, SymmetricKeyRatchet(), "some associated data".encode(),
-            KeyPair,
-            RootChain(),
-            key,
-            pubKey
+
+class SendReceiveChain(doubleratchet.kdfchains.ConstKDFChain):
+    def __init__(self, key):
+        super(SendReceiveChain, self).__init__(
+            "const_data".encode(),
+            doubleratchet.recommended.RootKeyKDF("SHA-512", "RootKeyKDF info string".encode()),
+            key
         )
 
-    def encrypt(self, msg):
-        cipherText = ratchet.encryptMessage(msg)
-        return cipherText
 
-    def decrypt(self, msg):
-        plainText = ratchet.decryptMessage(msg)
-        return plainText
+class SymmetricKeyRatchet(doubleratchet.ratchets.SymmetricKeyRatchet):
+    def __init__(self):
+        super(SymmetricKeyRatchet, self).__init__(SendReceiveChain, SendReceiveChain)
+
+
+class RootChain(doubleratchet.kdfchains.KDFChain):
+    def __init__(self):
+        super(RootChain, self).__init__(
+            doubleratchet.recommended.RootKeyKDF(
+                "SHA-512",
+                "IAmARootChain".encode()
+            ),
+            "I am a root key!".encode()
+        )
 
 class KeyPair(doubleratchet.KeyPair):
     def __init__(self, priv = None, pub = None):
@@ -112,44 +118,47 @@ class KeyPair(doubleratchet.KeyPair):
             other.pub
         )
 
-class SendReceiveChain(doubleratchet.kdfchains.ConstKDFChain):
-    def __init__(self, key):
-        super(SendReceiveChain, self).__init__(
-            "const_data".encode(),
-            doubleratchet.recommended.RootKeyKDF(
-                "SHA-512",
-                "RootKeyKDF info string".encode()
-            ),
-            key
-        )
 
-class SymmetricKeyRatchet(doubleratchet.ratchets.SymmetricKeyRatchet):
-    def __init__(self):
-        super(SymmetricKeyRatchet, self).__init__(
-            SendReceiveChain,
-            SendReceiveChain
+class Signal(doubleratchet.ratchets.DoubleRatchet):
+    def __init__(self, key=None, pubKey=None):
+        super(Signal, self).__init__(
+            doubleratchet.recommended.CBCHMACAEAD(
+                "SHA-512", "ExampleCBCHMACAEADConfig".encode()), 5, SymmetricKeyRatchet(), "some associated data".encode(),
+            KeyPair,
+            RootChain(),
+            key,
+            pubKey
         )
+    def _makeAD(self, header, ad):
+            return ad
+
+    def encrypt(self, msg):
+        cipherText = ratchet.encryptMessage(msg)
+        return cipherText
+
+    def decrypt(self, msg):
+        plainText = ratchet.decryptMessage(msg)
+        return plainText
 
 
-class RootChain(doubleratchet.kdfchains.KDFChain):
-    def __init__(self):
-        super(RootChain, self).__init__(
-            doubleratchet.recommended.RootKeyKDF(
-                "SHA-512",
-                "IAmARootChain".encode()
-            ),
-            "I am a root key!".encode()
-        )
+
 
 def test():
     key = KeyPair.generate()
 
-    r = Signal(key=key)
+    r1 = Signal(key=key)
+    r2 = Signal(pubKey=key.pub)
+
+    assert not r1.canSend()
+    assert r2.canSend()
 
     msg = "Hello there"
 
-    cipher = r.encryptMessage(msg)
+    cipher = r2.encryptMessage(msg.encode())
 
     print(cipher)
 
+    msg = r1.decryptMessage(cipher["ciphertext"], cipher["header"])
+
+    print(msg.decode())
 test()

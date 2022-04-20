@@ -9,15 +9,16 @@ from nacl.bindings.crypto_scalarmult import crypto_scalarmult
 from nacl.public import PrivateKey as Curve25519DecryptionKey
 from nacl.public import PublicKey as Curve25519EncryptionKey
 
+import pytest
 
 
 class SendReceiveChain(doubleratchet.kdfchains.ConstKDFChain):
     def __init__(self, key):
         super(SendReceiveChain, self).__init__(
-            "const_data".encode(),
+            "const_data".encode("US-ASCII"),
             doubleratchet.recommended.RootKeyKDF(
                 "SHA-512",
-                "RootKeyKDF info string".encode()
+                "RootKeyKDF info string".encode("US-ASCII")
             ),
             key
         )
@@ -36,9 +37,9 @@ class RootChain(doubleratchet.kdfchains.KDFChain):
         super(RootChain, self).__init__(
             doubleratchet.recommended.RootKeyKDF(
                 "SHA-512",
-                "IAmARootChain".encode()
+                "IAmARootChain".encode("US-ASCII")
             ),
-            "I am a root key!".encode()
+            "I am a root key!".encode("US-ASCII")
         )
 
 
@@ -69,11 +70,11 @@ class KeyPair(doubleratchet.KeyPair):
     def serialize(self):
         pub = self.pub
         pub = None if pub == None else base64.b64encode(
-            bytes(pub)).decode()
+            bytes(pub)).decode("US-ASCII")
 
         priv = self.priv
         priv = None if priv == None else base64.b64encode(
-            bytes(priv)).decode()
+            bytes(priv)).decode("US-ASCII")
 
         return {
             "super": super(KeyPair, self).serialize(),
@@ -91,13 +92,13 @@ class KeyPair(doubleratchet.KeyPair):
 
         if serialized["pub"] != None:
             self.__pub = cls.__wrap(
-                base64.b64decode(serialized["pub"].encode()),
+                base64.b64decode(serialized["pub"].encode("US-ASCII")),
                 Curve25519EncryptionKey
             )
 
         if serialized["priv"] != None:
             self.__priv = cls.__wrap(
-                base64.b64decode(serialized["priv"].encode()),
+                base64.b64decode(serialized["priv"].encode("US-ASCII")),
                 Curve25519DecryptionKey
             )
 
@@ -133,11 +134,11 @@ class DR(doubleratchet.ratchets.DoubleRatchet):
         super(DR, self).__init__(
             doubleratchet.recommended.CBCHMACAEAD(
                 "SHA-512",
-                "ExampleCBCHMACAEADConfig".encode()
+                "ExampleCBCHMACAEADConfig".encode("US-ASCII")
             ),
             5,
             SymmetricKeyRatchet(),
-            "some associated data".encode(),
+            "some associated data".encode("US-ASCII"),
             KeyPair,
             RootChain(),
             own_key,
@@ -145,20 +146,140 @@ class DR(doubleratchet.ratchets.DoubleRatchet):
         )
 
     def _makeAD(self, header, ad):
-        return
+        return ad
 
 
-def test():
-    key = KeyPair.generate()
+def test_messages():
+    alice_key = KeyPair.generate()
 
-    r = DR(own_key=key)
+    alice_ratchet = DR(own_key=alice_key)
+    bob_ratchet = DR(other_pub=alice_key.pub)
+
+    assert not alice_ratchet.canSend()
+    assert bob_ratchet.canSend()
+
+    message = os.urandom(100)
+    print(message)
+
+    c = bob_ratchet.encryptMessage(message)
+
+    print(c)
+
+    for _ in range(100):
+        message = os.urandom(100)
+
+        c = bob_ratchet.encryptMessage(message)
+
+        assert alice_ratchet.decryptMessage(
+            c["ciphertext"], c["header"]) == message
+
+        message = os.urandom(100)
+
+        c = alice_ratchet.encryptMessage(message)
+
+        assert bob_ratchet.decryptMessage(
+            c["ciphertext"], c["header"]) == message
+
+    assert alice_ratchet.canSend()
+    assert bob_ratchet.canSend()
 
 
-    msg = "Hello there"
+def test_not_synced():
+    alice_key = KeyPair.generate()
+    alice_ratchet = DR(own_key=alice_key)
 
-    cipher = r.encryptMessage(msg)
+    with pytest.raises(doubleratchet.exceptions.NotInitializedException):
+        alice_ratchet.encryptMessage("I will fail!".encode("US-ASCII"))
 
-    print(cipher)
+
+def test_skipped_message():
+    alice_key = KeyPair.generate()
+
+    alice_ratchet = DR(own_key=alice_key)
+    bob_ratchet = DR(other_pub=alice_key.pub)
+
+    for _ in range(100):
+        message_a = os.urandom(100)
+        message_b = os.urandom(100)
+
+        c_a = bob_ratchet.encryptMessage(message_a)
+        c_b = bob_ratchet.encryptMessage(message_b)
+
+        assert alice_ratchet.decryptMessage(
+            c_b["ciphertext"], c_b["header"]) == message_b
+        assert alice_ratchet.decryptMessage(
+            c_a["ciphertext"], c_a["header"]) == message_a
+
+        message_a = os.urandom(100)
+        message_b = os.urandom(100)
+
+        c_a = alice_ratchet.encryptMessage(message_a)
+        c_b = alice_ratchet.encryptMessage(message_b)
+
+        assert bob_ratchet.decryptMessage(
+            c_b["ciphertext"], c_b["header"]) == message_b
+        assert bob_ratchet.decryptMessage(
+            c_a["ciphertext"], c_a["header"]) == message_a
 
 
-test()
+def test_too_many_skipped_messages():
+    alice_key = KeyPair.generate()
+
+    alice_ratchet = DR(own_key=alice_key)
+    bob_ratchet = DR(other_pub=alice_key.pub)
+
+    # Skip six messages (five skipped messages are allowed)
+    for _ in range(6):
+        bob_ratchet.encryptMessage(os.urandom(100))
+
+    # Encrypt a seventh message
+    c = bob_ratchet.encryptMessage(os.urandom(100))
+
+    with pytest.raises(doubleratchet.exceptions.TooManySavedMessageKeysException):
+        alice_ratchet.decryptMessage(c["ciphertext"], c["header"])
+
+
+def test_serialization():
+    alice_key = KeyPair.generate()
+
+    alice_ratchet = DR(own_key=alice_key)
+    bob_ratchet = DR(other_pub=alice_key.pub)
+
+    for _ in range(100):
+        message = os.urandom(100)
+
+        c = bob_ratchet.encryptMessage(message)
+
+        assert alice_ratchet.decryptMessage(
+            c["ciphertext"], c["header"]) == message
+
+        message = os.urandom(100)
+
+        c = alice_ratchet.encryptMessage(message)
+
+        assert bob_ratchet.decryptMessage(
+            c["ciphertext"], c["header"]) == message
+
+    alice_ratchet_serialized = json.dumps(alice_ratchet.serialize())
+    bob_ratchet_serialized = json.dumps(bob_ratchet.serialize())
+
+    print(alice_ratchet_serialized)
+    print(bob_ratchet_serialized)
+
+    alice_ratchet = DR.fromSerialized(json.loads(alice_ratchet_serialized))
+    bob_ratchet = DR.fromSerialized(json.loads(bob_ratchet_serialized))
+
+    for _ in range(100):
+        message = os.urandom(100)
+
+        c = bob_ratchet.encryptMessage(message)
+
+        assert alice_ratchet.decryptMessage(
+            c["ciphertext"], c["header"]) == message
+
+        message = os.urandom(100)
+
+        c = alice_ratchet.encryptMessage(message)
+
+        assert bob_ratchet.decryptMessage(
+            c["ciphertext"], c["header"]) == message
