@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'messanger.apps.MessangerConfig',
+    'messanger.encryption',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

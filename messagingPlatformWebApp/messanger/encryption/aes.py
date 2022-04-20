@@ -3,11 +3,11 @@ import base64
 from Crypto import Random
 from Crypto.Cipher import AES
 
+
 class AESCipher():
     def __init__(self, key):
         self.blockSize = AES.block_size
         self.key = hashlib.sha256(key.encode()).digest()
-
 
     def encrypt(self, msg):
         #encrypt
@@ -32,7 +32,6 @@ class AESCipher():
         plainText = self.unPad(plainText).decode("utf-8")
 
         return plainText
-
 
     def padding(self, msg):
         sizeOfPad = self.blockSize - (len(msg) % self.blockSize)
