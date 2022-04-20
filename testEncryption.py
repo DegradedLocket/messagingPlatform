@@ -17,10 +17,10 @@ entFields = []
 
 key = "testKey"
 
-#files = ["testData/1Kdata.txt", "testData/5Kdata.txt",
-#         "testData/1Mdata.txt", "testData/5Mdata.txt"]
+files = ["testData/1Kdata.txt", "testData/5Kdata.txt",
+         "testData/1Mdata.txt", "testData/5Mdata.txt"]
 
-files = ["testData/engLipsum.txt"]
+#files = ["testData/engLipsum.txt"]
 #importFile = sys.argv[1]
 numOfTests = int(sys.argv[1])
 #numOfTests = 1
@@ -56,7 +56,7 @@ for file in files:
         encryptTime = encryptEnd - encryptStart
         encFields = [encryptTime, file]
 
-        encSize = sys.getsizeof(encMsg)
+        encSize = sys.getsizeof(encMsg["ciphertext"]) + sys.getsizeof(encMsg["header"])
         sizeFields = [plainSize, encSize]
 
 
@@ -72,10 +72,10 @@ for file in files:
 
         #writeCSV("SigEncrypt"+file[9:11]+".csv", encFields)
         #writeCSV("SigDecrypt"+file[9:11]+".csv", decFields)
-        #writeCSV("SigSize"+file[9:11]+".csv", sizeFields)
+        writeCSV("SigSize"+file[9:11]+".csv", sizeFields)
 
-        encEnt = entropyTest.entropyTest(encMsg["ciphertext"])
+        #encEnt = entropyTest.entropyTest(encMsg["ciphertext"])
 
-        entFields = [plainEnt, encEnt, file]
+        #entFields = [plainEnt, encEnt, file]
 
-        writeCSV("SigEntropy.csv", entFields)
+        #writeCSV("SigEntropy.csv", entFields)
