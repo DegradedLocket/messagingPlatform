@@ -9,8 +9,6 @@ print(encmsg)
 
 enc3 = "b'QmYxgyd2b3ACSHNJcx/EM+9W5v9uK0xea1RFdE9a2Pg='"
 b = enc3[1:]
-print(b)
-
 by = bytes(b, "utf-8")
 
 print(by)
